@@ -3,84 +3,1368 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Engineering Portfolio</title>
+    <title>Pranay Teja Bedadham | Engineering Portfolio</title>
+    <!-- Google Fonts: Plus Jakarta Sans & Fira Code -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+              mono: ['"Fira Code"', 'monospace'],
+            },
+            boxShadow: {
+              'glow-primary': '0 0 20px -3px rgba(139, 92, 246, 0.4)',
+              'glow-secondary': '0 0 20px -3px rgba(6, 182, 212, 0.4)',
+            }
+          }
+        }
+      }
+    </script>
     <!-- React & ReactDOM CDNs -->
-    <script
-      crossorigin
-      src="https://unpkg.com/react@18/umd/react.production.min.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
-    ></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <!-- Babel for in-browser JSX compilation -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  </head>
-  <body class="bg-gray-50 text-gray-900 font-sans antialiased">
-    <div id="root"></div>
 
+    <style>
+      /* Custom background styling with moving gradient shapes */
+      body {
+        background-color: #020617; /* slate-950 */
+        color: #f1f5f9;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        overflow-x: hidden;
+      }
+      .bg-grid {
+        background-size: 40px 40px;
+        background-image: 
+          linear-gradient(to right, rgba(30, 41, 59, 0.3) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(30, 41, 59, 0.3) 1px, transparent 1px);
+      }
+      .glow-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.15;
+        z-index: 0;
+        pointer-events: none;
+      }
+      .glow-violet {
+        background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+      }
+      .glow-cyan {
+        background: radial-gradient(circle, #06b6d4 0%, transparent 70%);
+      }
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #020617;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+      }
+    </style>
+  </head>
+  <body class="antialiased selection:bg-violet-500/30 selection:text-violet-200">
+    <!-- Ambient glowing backgrounds -->
+    <div class="relative w-full min-h-screen bg-grid">
+      <div class="glow-blob glow-violet w-[500px] h-[500px] -top-40 -left-40"></div>
+      <div class="glow-blob glow-cyan w-[600px] h-[600px] top-[40%] -right-40"></div>
+      <div class="glow-blob glow-violet w-[500px] h-[500px] -bottom-40 left-[20%]"></div>
+
+      <div id="root" class="relative z-10"></div>
+    </div>
+
+    <!-- React App Script -->
+    {% raw %}
     <script type="text/babel">
       const { useState, useEffect } = React;
 
+      // Reusable SVG Icons to keep the application dependencies self-contained
+      const Icons = {
+        Github: () => (
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path fillRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.577.688.479C19.138 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z" clipRule="evenodd" />
+          </svg>
+        ),
+        Linkedin: () => (
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path fillRule="evenodd" d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" clipRule="evenodd" />
+          </svg>
+        ),
+        Mail: () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        ),
+        ExternalLink: () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        ),
+        Calendar: () => (
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        ),
+        Academic: () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l9-5-9-5-9 5 9 5z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 14v7" />
+          </svg>
+        ),
+        Briefcase: () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        ),
+        Code: () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+          </svg>
+        ),
+        Star: () => (
+          <svg className="w-4 h-4 text-amber-400 fill-amber-400" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+          </svg>
+        ),
+        Settings: () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        ),
+        LogOut: () => (
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
+        )
+      };
+
       function App() {
+        // App States
+        const [profile, setProfile] = useState(null);
         const [projects, setProjects] = useState([]);
+        const [skills, setSkills] = useState([]);
+        const [experience, setExperience] = useState([]);
+        const [messages, setMessages] = useState([]);
         const [loading, setLoading] = useState(true);
 
+        // Navigation state
+        const [activeView, setActiveView] = useState("portfolio"); // "portfolio" or "admin"
+        const [adminTab, setAdminTab] = useState("profile"); // "profile", "projects", "skills", "experience", "messages"
+
+        // Auth States
+        const [role, setRole] = useState("guest");
+        const [showLoginModal, setShowLoginModal] = useState(false);
+        const [username, setUsername] = useState("");
+        const [password, setPassword] = useState("");
+        const [loginError, setLoginError] = useState("");
+
+        // Contact Form State
+        const [contactForm, setContactForm] = useState({ sender_name: "", sender_email: "", message_text: "" });
+        const [contactStatus, setContactStatus] = useState({ type: "", text: "" });
+
+        // Modals / CRUD Form States
+        const [isCrudOpen, setIsCrudOpen] = useState(false);
+        const [crudType, setCrudType] = useState(""); // "project", "skill", "experience"
+        const [crudData, setCrudData] = useState({});
+
+        // Fetch Functions
+        const fetchData = async () => {
+          try {
+            const [profileRes, projectsRes, skillsRes, expRes] = await Promise.all([
+              fetch("/api/profile"),
+              fetch("/api/projects"),
+              fetch("/api/skills"),
+              fetch("/api/experience")
+            ]);
+
+            const pData = await profileRes.json();
+            const projData = await projectsRes.json();
+            const sData = await skillsRes.json();
+            const eData = await expRes.json();
+
+            setProfile(pData);
+            setProjects(projData);
+            setSkills(sData);
+            setExperience(eData);
+          } catch (err) {
+            console.error("Error loading portfolio data:", err);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        const fetchMessages = async () => {
+          if (role !== "admin") return;
+          try {
+            const res = await fetch("/api/messages");
+            const data = await res.json();
+            setMessages(data);
+          } catch (err) {
+            console.error("Error loading messages:", err);
+          }
+        };
+
+        // Initial loading & Auth status
         useEffect(() => {
-          fetch("/api/projects")
-            .then((response) => response.json())
-            .then((data) => {
-              setProjects(data);
-              setLoading(false);
-            })
-            .catch((error) => {
-              console.error("Error fetching projects:", error);
-              setLoading(false);
+          fetch("/api/auth_status")
+            .then(res => res.json())
+            .then(data => {
+              setRole(data.role);
+              if (data.role === "admin") {
+                fetchMessages();
+              }
             });
+          fetchData();
         }, []);
 
+        // Refetch messages when role changes to admin
+        useEffect(() => {
+          if (role === "admin") {
+            fetchMessages();
+          } else {
+            setActiveView("portfolio");
+          }
+        }, [role]);
+
+        // Handlers
+        const handleLoginSubmit = async (e) => {
+          e.preventDefault();
+          setLoginError("");
+          try {
+            const res = await fetch("/api/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ username, password })
+            });
+            const data = await res.json();
+            if (res.ok) {
+              setRole("admin");
+              setShowLoginModal(false);
+              setUsername("");
+              setPassword("");
+            } else {
+              setLoginError(data.message || "Invalid admin credentials.");
+            }
+          } catch (err) {
+            setLoginError("Server communication failed.");
+          }
+        };
+
+        const handleLogout = async () => {
+          await fetch("/api/logout", { method: "POST" });
+          setRole("guest");
+          setActiveView("portfolio");
+        };
+
+        const handleContactSubmit = async (e) => {
+          e.preventDefault();
+          setContactStatus({ type: "info", text: "Sending your message..." });
+          try {
+            const res = await fetch("/api/messages", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(contactForm)
+            });
+            if (res.ok) {
+              setContactStatus({ type: "success", text: "Thank you! Your message was submitted successfully." });
+              setContactForm({ sender_name: "", sender_email: "", message_text: "" });
+            } else {
+              const data = await res.json();
+              setContactStatus({ type: "error", text: data.message || "Failed to submit message." });
+            }
+          } catch (err) {
+            setContactStatus({ type: "error", text: "An error occurred. Please try again later." });
+          }
+        };
+
+        // --- CRUD ACTIONS ---
+
+        // Profile Update
+        const handleProfileUpdateSubmit = async (e) => {
+          e.preventDefault();
+          try {
+            const res = await fetch("/api/profile", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(profile)
+            });
+            if (res.ok) {
+              alert("Profile updated successfully!");
+              fetchData();
+            } else {
+              alert("Failed to update profile.");
+            }
+          } catch (err) {
+            alert("Error sending update.");
+          }
+        };
+
+        // General Open Create Form
+        const openCreateForm = (type) => {
+          setCrudType(type);
+          let initialData = {};
+          if (type === "project") {
+            initialData = { id: null, title: "", description: "", tech_stack: "", image_url: "", github_url: "", live_url: "", featured: 0 };
+          } else if (type === "skill") {
+            initialData = { id: null, name: "", category: "Languages", proficiency: 80 };
+          } else if (type === "experience") {
+            initialData = { id: null, company_or_institution: "", role: "", duration: "", description: "", type: "work", sort_order: 0 };
+          }
+          setCrudData(initialData);
+          setIsCrudOpen(true);
+        };
+
+        // General Open Edit Form
+        const openEditForm = (type, item) => {
+          setCrudType(type);
+          setCrudData({ ...item });
+          setIsCrudOpen(true);
+        };
+
+        // General Submit Handle
+        const handleCrudSubmit = async (e) => {
+          e.preventDefault();
+          const isEdit = crudData.id !== null;
+          let url = "";
+          let method = isEdit ? "PUT" : "POST";
+
+          if (crudType === "project") {
+            url = isEdit ? `/api/projects/${crudData.id}` : "/api/projects";
+          } else if (crudType === "skill") {
+            url = isEdit ? `/api/skills/${crudData.id}` : "/api/skills";
+          } else if (crudType === "experience") {
+            url = isEdit ? `/api/experience/${crudData.id}` : "/api/experience";
+          }
+
+          try {
+            const res = await fetch(url, {
+              method,
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(crudData)
+            });
+            if (res.ok) {
+              setIsCrudOpen(false);
+              fetchData();
+            } else {
+              alert("Error completing database operation.");
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        };
+
+        // General Delete Handle
+        const handleCrudDelete = async (type, id) => {
+          if (!confirm(`Are you sure you want to delete this ${type}?`)) return;
+          let url = "";
+          if (type === "project") url = `/api/projects/${id}`;
+          else if (type === "skill") url = `/api/skills/${id}`;
+          else if (type === "experience") url = `/api/experience/${id}`;
+
+          try {
+            const res = await fetch(url, { method: "DELETE" });
+            if (res.ok) {
+              fetchData();
+            } else {
+              alert("Error deleting record.");
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        };
+
+        // Message Inbox Operations
+        const toggleMessageRead = async (msg) => {
+          try {
+            const newReadStatus = msg.is_read ? 0 : 1;
+            const res = await fetch(`/api/messages/${msg.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ is_read: newReadStatus })
+            });
+            if (res.ok) {
+              fetchMessages();
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        };
+
+        const deleteMessage = async (id) => {
+          if (!confirm("Delete this message permanently?")) return;
+          try {
+            const res = await fetch(`/api/messages/${id}`, { method: "DELETE" });
+            if (res.ok) {
+              fetchMessages();
+            }
+          } catch (err) {
+            console.error(err);
+          }
+        };
+
+        // Group skills by category
+        const skillsByCategory = skills.reduce((acc, skill) => {
+          if (!acc[skill.category]) acc[skill.category] = [];
+          acc[skill.category].push(skill);
+          return acc;
+        }, {});
+
+        if (loading) {
+          return (
+            <div className="min-h-screen flex flex-col justify-center items-center gap-4 bg-slate-950">
+              <div className="w-12 h-12 rounded-full border-4 border-violet-500 border-t-transparent animate-spin"></div>
+              <p className="text-slate-400 font-mono text-sm tracking-wider">LOADING ENVIRONMENT...</p>
+            </div>
+          );
+        }
+
         return (
-          <div className="max-w-5xl mx-auto px-4 py-12">
-            <header className="mb-12 border-b pb-6">
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">
-                B.Tech Engineering Portfolio
-              </h1>
-              <p className="text-xl text-gray-600">
-                Building software, robotics, and full-stack applications.
-              </p>
+          <div className="min-h-screen flex flex-col justify-between">
+            {/* Header/Nav */}
+            <header className="sticky top-0 bg-slate-950/80 backdrop-blur-md border-b border-slate-900 z-40 transition-colors">
+              <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+                <a href="#hero" className="flex items-center gap-2 group" onClick={() => setActiveView("portfolio")}>
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center font-bold text-white shadow-glow-primary group-hover:scale-105 transition-transform">
+                    P
+                  </div>
+                  <span className="font-bold text-lg tracking-wide bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent group-hover:text-white transition-colors">
+                    {profile?.name.split(" ")[0]} Teja
+                  </span>
+                </a>
+
+                <nav className="flex items-center gap-6">
+                  {activeView === "portfolio" ? (
+                    <div className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-400">
+                      <a href="#about" className="hover:text-slate-200 transition-colors">About</a>
+                      <a href="#skills" className="hover:text-slate-200 transition-colors">Skills</a>
+                      <a href="#experience" className="hover:text-slate-200 transition-colors">Experience</a>
+                      <a href="#projects" className="hover:text-slate-200 transition-colors">Projects</a>
+                      <a href="#contact" className="hover:text-slate-200 transition-colors">Contact</a>
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={() => setActiveView("portfolio")} 
+                      className="text-xs font-mono bg-slate-900 border border-slate-800 text-slate-400 hover:text-white px-3 py-1.5 rounded transition-colors"
+                    >
+                      &larr; BACK TO PORTFOLIO
+                    </button>
+                  )}
+
+                  {role === "admin" && (
+                    <div className="flex items-center gap-3">
+                      {activeView === "portfolio" ? (
+                        <button
+                          onClick={() => setActiveView("admin")}
+                          className="flex items-center gap-1.5 text-xs font-mono font-bold bg-violet-950/40 border border-violet-800/80 text-violet-300 px-3 py-1.5 rounded-full hover:bg-violet-900/50 hover:border-violet-600 transition-all shadow-glow-primary"
+                        >
+                          <Icons.Settings />
+                          ADMIN CONSOLE
+                        </button>
+                      ) : (
+                        <span className="text-xs font-mono bg-green-950/40 border border-green-800/60 text-green-300 px-3 py-1.5 rounded-full shadow-inner">
+                          ADMIN ACTIVE
+                        </span>
+                      )}
+
+                      <button
+                        onClick={handleLogout}
+                        className="p-1.5 text-slate-500 hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-all"
+                        title="Log Out"
+                      >
+                        <Icons.LogOut />
+                      </button>
+                    </div>
+                  )}
+                </nav>
+              </div>
             </header>
 
-            <main>
-              <h2 className="text-2xl font-semibold mb-6">Recent Projects</h2>
-              {loading ? (
-                <p className="text-gray-500">Loading projects...</p>
-              ) : projects.length === 0 ? (
-                <p className="text-gray-500">
-                  No projects found. Did you run init_db.py?
-                </p>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {projects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-                    >
-                      <h3 className="text-xl font-bold mb-2">
-                        {project.title}
-                      </h3>
-                      <p className="text-gray-600 mb-4">
-                        {project.description}
+            {/* Main Content Areas */}
+            <main className="flex-grow">
+              {activeView === "portfolio" ? (
+                /* --- PORTFOLIO VIEW --- */
+                <div>
+                  {/* Hero / Hero Section */}
+                  <section id="hero" className="max-w-6xl mx-auto px-6 pt-16 pb-24 md:py-32 flex flex-col-reverse md:flex-row items-center gap-12 relative">
+                    <div className="flex-1 space-y-6 text-center md:text-left">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-950/30 border border-violet-800/40 text-xs font-mono font-semibold text-violet-400">
+                        <span className="w-2 h-2 rounded-full bg-violet-500 animate-pulse"></span>
+                        Available for Projects
+                      </div>
+                      <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
+                        Hi, I'm <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-cyan-400 bg-clip-text text-transparent">{profile?.name}</span>
+                      </h1>
+                      <h2 className="text-xl md:text-2xl font-semibold text-slate-300 font-mono">
+                        {profile?.title}
+                      </h2>
+                      <p className="text-slate-400 max-w-xl text-base leading-relaxed">
+                        {profile?.bio}
                       </p>
-                      <div className="text-sm font-medium text-blue-600 bg-blue-50 inline-block px-3 py-1 rounded-full">
-                        {project.tech_stack}
+                      
+                      {/* Social Actions */}
+                      <div className="flex flex-wrap justify-center md:justify-start items-center gap-4 pt-2">
+                        {profile?.github_link && (
+                          <a href={profile.github_link} target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 rounded-xl transition-all hover:-translate-y-0.5 text-slate-300 hover:text-white">
+                            <Icons.Github />
+                          </a>
+                        )}
+                        {profile?.linkedin_link && (
+                          <a href={profile.linkedin_link} target="_blank" rel="noopener noreferrer" className="p-3 bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 rounded-xl transition-all hover:-translate-y-0.5 text-slate-300 hover:text-white">
+                            <Icons.Linkedin />
+                          </a>
+                        )}
+                        {profile?.email && (
+                          <a href={`mailto:${profile.email}`} className="p-3 bg-slate-900 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/80 rounded-xl transition-all hover:-translate-y-0.5 text-slate-300 hover:text-white">
+                            <Icons.Mail />
+                          </a>
+                        )}
+                        {profile?.resume_url && profile.resume_url !== "#" && (
+                          <a 
+                            href={profile.resume_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="px-6 py-3 bg-gradient-to-r from-violet-600 to-cyan-500 hover:from-violet-500 hover:to-cyan-400 text-white font-medium rounded-xl transition-all hover:shadow-glow-primary hover:-translate-y-0.5"
+                          >
+                            View Resume
+                          </a>
+                        )}
                       </div>
                     </div>
-                  ))}
+
+                    <div className="flex-shrink-0 relative">
+                      <div className="absolute inset-0 bg-gradient-to-tr from-violet-500 to-cyan-400 rounded-full blur-2xl opacity-20 scale-105 animate-pulse"></div>
+                      <div className="relative w-56 h-56 md:w-72 md:h-72 rounded-3xl overflow-hidden border-2 border-slate-800 shadow-2xl p-2 bg-slate-900">
+                        {profile?.profile_picture ? (
+                          <img 
+                            src={profile.profile_picture} 
+                            alt={profile?.name} 
+                            className="w-full h-full object-cover rounded-2xl" 
+                            onError={(e) => {
+                              e.target.src = "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=400";
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-slate-800 flex items-center justify-center">
+                            <span className="text-4xl font-bold font-mono text-slate-600">PTB</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Skills Grid */}
+                  <section id="skills" className="bg-slate-950/40 border-y border-slate-900 py-24">
+                    <div className="max-w-6xl mx-auto px-6">
+                      <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                        <div className="font-mono text-xs text-violet-400 tracking-widest uppercase">Expertise & Skills</div>
+                        <h2 className="text-3xl font-extrabold md:text-4xl">Technical Arsenal</h2>
+                        <div className="h-1 w-20 bg-gradient-to-r from-violet-500 to-cyan-500 mx-auto rounded-full"></div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {Object.keys(skillsByCategory).map((catName) => (
+                          <div key={catName} className="bg-slate-900/40 backdrop-blur-sm border border-slate-850 p-6 rounded-2xl space-y-6">
+                            <h3 className="text-lg font-bold font-mono text-cyan-400 border-b border-slate-800/80 pb-3 flex items-center gap-2">
+                              <Icons.Code />
+                              {catName}
+                            </h3>
+                            <div className="space-y-4">
+                              {skillsByCategory[catName].map((skill) => (
+                                <div key={skill.id} className="space-y-1.5">
+                                  <div className="flex justify-between text-sm">
+                                    <span className="font-medium text-slate-300">{skill.name}</span>
+                                    <span className="font-mono text-xs text-slate-500">{skill.proficiency}%</span>
+                                  </div>
+                                  <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+                                    <div 
+                                      className="bg-gradient-to-r from-violet-600 to-cyan-500 h-full rounded-full transition-all duration-1000" 
+                                      style={{ width: `${skill.proficiency}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Experience Timeline */}
+                  <section id="experience" className="py-24 max-w-6xl mx-auto px-6">
+                    <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                      <div className="font-mono text-xs text-cyan-400 tracking-widest uppercase">Chronological History</div>
+                      <h2 className="text-3xl font-extrabold md:text-4xl">Education & Experience</h2>
+                      <div className="h-1 w-20 bg-gradient-to-r from-cyan-500 to-violet-500 mx-auto rounded-full"></div>
+                    </div>
+
+                    <div className="relative border-l-2 border-slate-800 max-w-3xl mx-auto pl-8 space-y-12">
+                      {experience.map((exp) => (
+                        <div key={exp.id} className="relative group">
+                          {/* Timeline dot */}
+                          <div className={`absolute -left-[41px] top-1.5 w-6 h-6 rounded-full border-4 border-slate-950 flex items-center justify-center transition-all group-hover:scale-110 ${
+                            exp.type === "work" ? "bg-violet-500" : "bg-cyan-500"
+                          }`}>
+                            <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full font-mono bg-slate-900 border border-slate-800 text-slate-400">
+                                {exp.type === "work" ? <Icons.Briefcase /> : <Icons.Academic />}
+                                {exp.type === "work" ? "Work" : "Education"}
+                              </span>
+                              <span className="text-xs font-mono text-slate-500 flex items-center gap-1">
+                                <Icons.Calendar />
+                                {exp.duration}
+                              </span>
+                            </div>
+
+                            <h3 className="text-xl font-bold text-slate-200 group-hover:text-violet-400 transition-colors">
+                              {exp.role}
+                            </h3>
+                            <h4 className="text-md font-medium text-slate-400">
+                              {exp.company_or_institution}
+                            </h4>
+                            <p className="text-slate-500 text-sm leading-relaxed max-w-2xl pt-1">
+                              {exp.description}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Projects Grid */}
+                  <section id="projects" className="bg-slate-950/40 border-y border-slate-900 py-24">
+                    <div className="max-w-6xl mx-auto px-6">
+                      <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                        <div className="font-mono text-xs text-violet-400 tracking-widest uppercase">Showcase of Work</div>
+                        <h2 className="text-3xl font-extrabold md:text-4xl">Featured Projects</h2>
+                        <div className="h-1 w-20 bg-gradient-to-r from-violet-500 to-cyan-500 mx-auto rounded-full"></div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {projects.map((project) => (
+                          <div 
+                            key={project.id} 
+                            className={`group relative bg-slate-900/60 border border-slate-800/80 rounded-2xl overflow-hidden hover:border-violet-500/40 transition-all duration-300 flex flex-col justify-between hover:shadow-glow-secondary ${
+                              project.featured ? 'ring-1 ring-violet-500/30 shadow-glow-primary' : ''
+                            }`}
+                          >
+                            <div>
+                              {/* Card Image */}
+                              <div className="h-48 overflow-hidden bg-slate-950 relative border-b border-slate-900">
+                                {project.featured ? (
+                                  <div className="absolute top-3 left-3 z-10 flex items-center gap-1 bg-violet-950/80 border border-violet-500/40 backdrop-blur-md px-2 py-0.5 rounded-md text-[10px] font-mono font-bold text-violet-300">
+                                    <Icons.Star />
+                                    FEATURED
+                                  </div>
+                                ) : null}
+
+                                <img 
+                                  src={project.image_url || "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600"} 
+                                  alt={project.title} 
+                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  onError={(e) => {
+                                    e.target.src = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600";
+                                  }}
+                                />
+                              </div>
+
+                              <div className="p-6 space-y-3">
+                                <h3 className="text-lg font-bold text-slate-200 group-hover:text-violet-400 transition-colors line-clamp-1">
+                                  {project.title}
+                                </h3>
+                                <p className="text-slate-400 text-xs leading-relaxed line-clamp-3">
+                                  {project.description}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="px-6 pb-6 pt-2 space-y-4">
+                              {/* Tech stacks */}
+                              <div className="flex flex-wrap gap-1.5">
+                                {project.tech_stack.split(',').map((tech, idx) => (
+                                  <span key={idx} className="bg-slate-950 text-[10px] font-mono text-cyan-400 px-2 py-0.5 rounded border border-slate-800">
+                                    {tech.trim()}
+                                  </span>
+                                ))}
+                              </div>
+
+                              {/* Project Links */}
+                              <div className="flex items-center gap-4 border-t border-slate-850 pt-3">
+                                {project.github_url && (
+                                  <a href={project.github_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 font-mono transition-colors">
+                                    <Icons.Github />
+                                    GITHUB
+                                  </a>
+                                )}
+                                {project.live_url && (
+                                  <a href={project.live_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 font-mono transition-colors">
+                                    <Icons.ExternalLink />
+                                    LIVE DEMO
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Contact / Message Form */}
+                  <section id="contact" className="py-24 max-w-4xl mx-auto px-6">
+                    <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
+                      <div className="font-mono text-xs text-violet-400 tracking-widest uppercase">Get In Touch</div>
+                      <h2 className="text-3xl font-extrabold md:text-4xl">Send a Message</h2>
+                      <div className="h-1 w-20 bg-gradient-to-r from-violet-500 to-cyan-500 mx-auto rounded-full"></div>
+                    </div>
+
+                    <div className="bg-slate-900/40 backdrop-blur-md border border-slate-850 rounded-3xl p-8 md:p-10 shadow-xl relative overflow-hidden">
+                      <form onSubmit={handleContactSubmit} className="space-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <label className="block text-xs font-semibold font-mono text-slate-400 uppercase">Your Name</label>
+                            <input 
+                              type="text" 
+                              required 
+                              value={contactForm.sender_name} 
+                              onChange={(e) => setContactForm({ ...contactForm, sender_name: e.target.value })}
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-violet-500/80 transition-colors text-sm"
+                              placeholder="John Doe"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <label className="block text-xs font-semibold font-mono text-slate-400 uppercase">Email Address</label>
+                            <input 
+                              type="email" 
+                              required 
+                              value={contactForm.sender_email} 
+                              onChange={(e) => setContactForm({ ...contactForm, sender_email: e.target.value })}
+                              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-violet-500/80 transition-colors text-sm"
+                              placeholder="john@example.com"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="block text-xs font-semibold font-mono text-slate-400 uppercase">Your Message</label>
+                          <textarea 
+                            required 
+                            rows="5"
+                            value={contactForm.message_text} 
+                            onChange={(e) => setContactForm({ ...contactForm, message_text: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-violet-500/80 transition-colors text-sm resize-none"
+                            placeholder="Describe your project, question, or opportunity..."
+                          ></textarea>
+                        </div>
+
+                        {contactStatus.text && (
+                          <div className={`p-4 rounded-xl text-xs font-mono border ${
+                            contactStatus.type === "success" 
+                              ? "bg-green-950/20 border-green-500/30 text-green-400" 
+                              : contactStatus.type === "error"
+                                ? "bg-red-950/20 border-red-500/30 text-red-400"
+                                : "bg-cyan-950/20 border-cyan-500/30 text-cyan-400"
+                          }`}>
+                            {contactStatus.text}
+                          </div>
+                        )}
+
+                        <button 
+                          type="submit" 
+                          className="w-full py-4 bg-gradient-to-r from-violet-600 to-cyan-500 hover:from-violet-500 hover:to-cyan-400 text-white font-bold rounded-xl transition-all hover:shadow-glow-primary hover:-translate-y-0.5"
+                        >
+                          Send Message
+                        </button>
+                      </form>
+                    </div>
+                  </section>
+                </div>
+              ) : (
+                /* --- ADMIN CONTROL CONSOLE VIEW --- */
+                <div className="max-w-6xl mx-auto px-6 py-12">
+                  <div className="flex flex-col md:flex-row gap-8">
+                    {/* Left Sidebar Nav */}
+                    <div className="w-full md:w-64 flex-shrink-0 flex flex-row md:flex-col gap-1 overflow-x-auto md:overflow-x-visible pb-3 md:pb-0 border-b md:border-b-0 md:border-r border-slate-900">
+                      {[
+                        { id: "profile", label: "Branding / Profile" },
+                        { id: "projects", label: "Projects Grid" },
+                        { id: "skills", label: "Skills List" },
+                        { id: "experience", label: "Experience Timeline" },
+                        { id: "messages", label: `Inbox Messages (${messages.filter(m => !m.is_read).length})` }
+                      ].map((tab) => (
+                        <button
+                          key={tab.id}
+                          onClick={() => setAdminTab(tab.id)}
+                          className={`w-full text-left px-4 py-3 rounded-lg text-sm font-semibold transition-all font-mono whitespace-nowrap ${
+                            adminTab === tab.id 
+                              ? "bg-violet-950/30 text-violet-300 border border-violet-800/40" 
+                              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
+                          }`}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Right Panel Workspace */}
+                    <div className="flex-grow min-w-0">
+                      
+                      {/* Sub-view: Profile Info */}
+                      {adminTab === "profile" && profile && (
+                        <form onSubmit={handleProfileUpdateSubmit} className="space-y-6">
+                          <h2 className="text-xl font-bold font-mono text-violet-400 pb-2 border-b border-slate-900">Branding Information</h2>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-1">
+                              <label className="text-xs font-mono text-slate-400">Full Name</label>
+                              <input 
+                                type="text" required value={profile.name} 
+                                onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs font-mono text-slate-400">Professional Title</label>
+                              <input 
+                                type="text" required value={profile.title} 
+                                onChange={(e) => setProfile({ ...profile, title: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1 md:col-span-2">
+                              <label className="text-xs font-mono text-slate-400">Bio Description</label>
+                              <textarea 
+                                rows="4" required value={profile.bio} 
+                                onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none resize-none"
+                              ></textarea>
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs font-mono text-slate-400">Profile Image URL</label>
+                              <input 
+                                type="text" value={profile.profile_picture || ""} 
+                                onChange={(e) => setProfile({ ...profile, profile_picture: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs font-mono text-slate-400">Resume File Link</label>
+                              <input 
+                                type="text" value={profile.resume_url || ""} 
+                                onChange={(e) => setProfile({ ...profile, resume_url: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs font-mono text-slate-400">Email Address</label>
+                              <input 
+                                type="email" value={profile.email || ""} 
+                                onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs font-mono text-slate-400">GitHub Profile Link</label>
+                              <input 
+                                type="text" value={profile.github_link || ""} 
+                                onChange={(e) => setProfile({ ...profile, github_link: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                              />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-xs font-mono text-slate-400">LinkedIn Profile Link</label>
+                              <input 
+                                type="text" value={profile.linkedin_link || ""} 
+                                onChange={(e) => setProfile({ ...profile, linkedin_link: e.target.value })}
+                                className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                              />
+                            </div>
+                          </div>
+                          <button type="submit" className="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 font-bold text-white text-sm rounded-lg transition-colors shadow-glow-primary">
+                            Save Branding Changes
+                          </button>
+                        </form>
+                      )}
+
+                      {/* Sub-view: Projects management */}
+                      {adminTab === "projects" && (
+                        <div className="space-y-6">
+                          <div className="flex justify-between items-center pb-2 border-b border-slate-900">
+                            <h2 className="text-xl font-bold font-mono text-violet-400">Projects Grid</h2>
+                            <button 
+                              onClick={() => openCreateForm("project")}
+                              className="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-xs font-bold text-white rounded font-mono"
+                            >
+                              + ADD NEW PROJECT
+                            </button>
+                          </div>
+
+                          <div className="space-y-4">
+                            {projects.map((proj) => (
+                              <div key={proj.id} className="bg-slate-900/50 border border-slate-850 p-4 rounded-xl flex items-center justify-between gap-4">
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="font-bold text-slate-200 text-sm truncate">{proj.title}</h3>
+                                    {proj.featured ? (
+                                      <span className="bg-amber-950 text-amber-400 border border-amber-800/40 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono">FEATURED</span>
+                                    ) : null}
+                                  </div>
+                                  <p className="text-slate-500 text-xs truncate max-w-md">{proj.description}</p>
+                                  <span className="text-[10px] font-mono text-slate-400">{proj.tech_stack}</span>
+                                </div>
+                                <div className="flex gap-2 flex-shrink-0">
+                                  <button 
+                                    onClick={() => openEditForm("project", proj)}
+                                    className="px-2.5 py-1 text-[11px] font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white rounded transition-colors"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button 
+                                    onClick={() => handleCrudDelete("project", proj.id)}
+                                    className="px-2.5 py-1 text-[11px] font-bold bg-red-950/20 text-red-400 hover:bg-red-900 hover:text-white rounded border border-red-900/30 transition-colors"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Sub-view: Skills management */}
+                      {adminTab === "skills" && (
+                        <div className="space-y-6">
+                          <div className="flex justify-between items-center pb-2 border-b border-slate-900">
+                            <h2 className="text-xl font-bold font-mono text-violet-400">Technical Skills</h2>
+                            <button 
+                              onClick={() => openCreateForm("skill")}
+                              className="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-xs font-bold text-white rounded font-mono"
+                            >
+                              + ADD NEW SKILL
+                            </button>
+                          </div>
+
+                          <div className="space-y-4">
+                            {skills.map((skill) => (
+                              <div key={skill.id} className="bg-slate-900/50 border border-slate-850 p-4 rounded-xl flex items-center justify-between gap-4">
+                                <div>
+                                  <h3 className="font-bold text-slate-200 text-sm">{skill.name}</h3>
+                                  <div className="flex gap-2 text-[10px] font-mono text-slate-400 pt-1">
+                                    <span className="bg-slate-950 border border-slate-850 px-1.5 py-0.5 rounded text-cyan-400">{skill.category}</span>
+                                    <span className="bg-slate-950 border border-slate-850 px-1.5 py-0.5 rounded">Level: {skill.proficiency}%</span>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button 
+                                    onClick={() => openEditForm("skill", skill)}
+                                    className="px-2.5 py-1 text-[11px] font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white rounded transition-colors"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button 
+                                    onClick={() => handleCrudDelete("skill", skill.id)}
+                                    className="px-2.5 py-1 text-[11px] font-bold bg-red-950/20 text-red-400 hover:bg-red-900 hover:text-white rounded border border-red-900/30 transition-colors"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Sub-view: Experience management */}
+                      {adminTab === "experience" && (
+                        <div className="space-y-6">
+                          <div className="flex justify-between items-center pb-2 border-b border-slate-900">
+                            <h2 className="text-xl font-bold font-mono text-violet-400">Experience Timeline</h2>
+                            <button 
+                              onClick={() => openCreateForm("experience")}
+                              className="px-4 py-1.5 bg-violet-600 hover:bg-violet-500 text-xs font-bold text-white rounded font-mono"
+                            >
+                              + ADD NEW TIMELINE ENTRY
+                            </button>
+                          </div>
+
+                          <div className="space-y-4">
+                            {experience.map((exp) => (
+                              <div key={exp.id} className="bg-slate-900/50 border border-slate-850 p-4 rounded-xl flex items-center justify-between gap-4">
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <h3 className="font-bold text-slate-200 text-sm truncate">{exp.role}</h3>
+                                    <span className="bg-slate-950 border border-slate-850 text-[9px] font-bold px-1.5 py-0.5 rounded font-mono text-cyan-400 uppercase">{exp.type}</span>
+                                  </div>
+                                  <h4 className="text-xs text-slate-400">{exp.company_or_institution}</h4>
+                                  <p className="text-[10px] text-slate-500 truncate max-w-sm font-mono pt-1">{exp.duration}</p>
+                                </div>
+                                <div className="flex gap-2 flex-shrink-0">
+                                  <button 
+                                    onClick={() => openEditForm("experience", exp)}
+                                    className="px-2.5 py-1 text-[11px] font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white rounded transition-colors"
+                                  >
+                                    Edit
+                                  </button>
+                                  <button 
+                                    onClick={() => handleCrudDelete("experience", exp.id)}
+                                    className="px-2.5 py-1 text-[11px] font-bold bg-red-950/20 text-red-400 hover:bg-red-900 hover:text-white rounded border border-red-900/30 transition-colors"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Sub-view: Messages Inbox */}
+                      {adminTab === "messages" && (
+                        <div className="space-y-6">
+                          <h2 className="text-xl font-bold font-mono text-violet-400 pb-2 border-b border-slate-900">Visitor Message Inbox</h2>
+                          
+                          {messages.length === 0 ? (
+                            <p className="text-slate-500 font-mono text-sm py-4">No messages received yet.</p>
+                          ) : (
+                            <div className="space-y-4">
+                              {messages.map((msg) => (
+                                <div 
+                                  key={msg.id} 
+                                  className={`border p-5 rounded-2xl relative ${
+                                    msg.is_read 
+                                      ? "bg-slate-900/30 border-slate-900" 
+                                      : "bg-slate-900/70 border-violet-800/40 shadow-glow-primary"
+                                  }`}
+                                >
+                                  {/* Read Badge */}
+                                  {!msg.is_read && (
+                                    <span className="absolute top-4 right-4 w-2 h-2 rounded-full bg-violet-400" title="Unread"></span>
+                                  )}
+
+                                  <div className="space-y-3">
+                                    <div className="flex flex-wrap justify-between items-start gap-2">
+                                      <div>
+                                        <h3 className="font-bold text-slate-200 text-sm">{msg.sender_name}</h3>
+                                        <a href={`mailto:${msg.sender_email}`} className="text-xs text-cyan-400 hover:underline">{msg.sender_email}</a>
+                                      </div>
+                                      <span className="text-[10px] font-mono text-slate-500">{new Date(msg.created_at).toLocaleString()}</span>
+                                    </div>
+                                    <p className="text-slate-300 text-xs whitespace-pre-wrap font-sans bg-slate-950/60 p-3 rounded-lg border border-slate-850">{msg.message_text}</p>
+                                    
+                                    <div className="flex gap-4 pt-1">
+                                      <button 
+                                        onClick={() => toggleMessageRead(msg)} 
+                                        className="text-xs font-semibold font-mono text-slate-400 hover:text-slate-200 transition-colors"
+                                      >
+                                        {msg.is_read ? "MARK UNREAD" : "MARK READ"}
+                                      </button>
+                                      <button 
+                                        onClick={() => deleteMessage(msg.id)} 
+                                        className="text-xs font-semibold font-mono text-red-500 hover:text-red-400 transition-colors"
+                                      >
+                                        DELETE
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
                 </div>
               )}
             </main>
+
+            {/* Footer & Secret login door */}
+            <footer className="bg-slate-950 py-10 border-t border-slate-900 text-center text-slate-500 text-xs">
+              <div className="max-w-6xl mx-auto px-6 space-y-4">
+                <p>
+                  &copy; {new Date().getFullYear()} {profile?.name}. Crafted using Flask, SQLite & React.
+                </p>
+                <div>
+                  {role === "guest" && (
+                    <button 
+                      onClick={() => setShowLoginModal(true)} 
+                      className="hover:text-slate-400 font-mono focus:outline-none transition-colors border border-slate-900 px-3 py-1 rounded hover:border-slate-850"
+                    >
+                      LOGIN GATEWAY [ &pi; ]
+                    </button>
+                  )}
+                </div>
+              </div>
+            </footer>
+
+            {/* Modal: Login Dialog */}
+            {showLoginModal && (
+              <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
+                <div className="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-glow-primary max-w-sm w-full relative">
+                  <button 
+                    onClick={() => setShowLoginModal(false)}
+                    className="absolute top-4 right-4 text-slate-500 hover:text-slate-200 text-sm font-bold"
+                  >
+                    &times;
+                  </button>
+
+                  <h2 className="text-xl font-bold font-mono text-slate-100 mb-6 flex items-center gap-2">
+                    <Icons.Settings />
+                    Admin Gateway
+                  </h2>
+
+                  {loginError && (
+                    <div className="bg-red-950/20 border border-red-800/40 text-red-400 p-3 rounded-lg text-xs font-mono mb-4">
+                      {loginError}
+                    </div>
+                  )}
+
+                  <form onSubmit={handleLoginSubmit} className="space-y-4">
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold font-mono text-slate-400 uppercase">Username</label>
+                      <input 
+                        type="text" required value={username} 
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-semibold font-mono text-slate-400 uppercase">Password</label>
+                      <input 
+                        type="password" required value={password} 
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                      />
+                    </div>
+                    <button 
+                      type="submit" 
+                      className="w-full py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-lg text-sm transition-colors shadow-glow-primary"
+                    >
+                      Authenticate
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {/* Modal: Unified CRUD Form for Projects, Skills, and Experience */}
+            {isCrudOpen && (
+              <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+                <div className="bg-slate-900 border border-slate-800 p-6 md:p-8 rounded-2xl shadow-glow-secondary max-w-lg w-full relative my-8">
+                  <button 
+                    onClick={() => setIsCrudOpen(false)}
+                    className="absolute top-4 right-4 text-slate-500 hover:text-slate-200 text-sm font-bold"
+                  >
+                    &times;
+                  </button>
+
+                  <h2 className="text-xl font-bold font-mono text-slate-100 mb-6">
+                    {crudData.id ? "Modify" : "Create New"} {crudType.toUpperCase()}
+                  </h2>
+
+                  <form onSubmit={handleCrudSubmit} className="space-y-5">
+                    
+                    {/* Project fields */}
+                    {crudType === "project" && (
+                      <div className="space-y-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Title</label>
+                          <input 
+                            type="text" required value={crudData.title || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, title: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Description</label>
+                          <textarea 
+                            rows="3" required value={crudData.description || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, description: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none resize-none"
+                          ></textarea>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Tech Stack (comma separated)</label>
+                          <input 
+                            type="text" required placeholder="React, Node, SQLite" value={crudData.tech_stack || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, tech_stack: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Image URL</label>
+                          <input 
+                            type="text" placeholder="https://images.unsplash.com/..." value={crudData.image_url || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, image_url: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-mono text-slate-400">GitHub Link</label>
+                            <input 
+                              type="text" value={crudData.github_url || ""} 
+                              onChange={(e) => setCrudData({ ...crudData, github_url: e.target.value })}
+                              className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-mono text-slate-400">Live Demo Link</label>
+                            <input 
+                              type="text" value={crudData.live_url || ""} 
+                              onChange={(e) => setCrudData({ ...crudData, live_url: e.target.value })}
+                              className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 pt-2">
+                          <input 
+                            type="checkbox" id="featured" checked={crudData.featured === 1}
+                            onChange={(e) => setCrudData({ ...crudData, featured: e.target.checked ? 1 : 0 })}
+                            className="w-4 h-4 rounded accent-violet-600 focus:outline-none"
+                          />
+                          <label htmlFor="featured" className="text-xs font-mono text-slate-300">Feature this project (adds glow highlight)</label>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Skill fields */}
+                    {crudType === "skill" && (
+                      <div className="space-y-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Skill Name</label>
+                          <input 
+                            type="text" required placeholder="Python" value={crudData.name || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, name: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Category</label>
+                          <select 
+                            value={crudData.category || "Languages"}
+                            onChange={(e) => setCrudData({ ...crudData, category: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          >
+                            <option value="Languages">Languages</option>
+                            <option value="Frameworks / Libs">Frameworks / Libs</option>
+                            <option value="Hardware / Tools">Hardware / Tools</option>
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex justify-between text-xs font-mono text-slate-400 mb-1">
+                            <span>Proficiency / Mastery Level</span>
+                            <span>{crudData.proficiency}%</span>
+                          </div>
+                          <input 
+                            type="range" min="10" max="100" step="5" value={crudData.proficiency || 80} 
+                            onChange={(e) => setCrudData({ ...crudData, proficiency: parseInt(e.target.value) })}
+                            className="w-full accent-violet-600 bg-slate-950 rounded-lg appearance-none h-1.5 cursor-pointer border border-slate-850"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Experience timeline fields */}
+                    {crudType === "experience" && (
+                      <div className="space-y-4">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Company or Institution</label>
+                          <input 
+                            type="text" required placeholder="e.g. RoboTech Labs" value={crudData.company_or_institution || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, company_or_institution: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Role or Degree Name</label>
+                          <input 
+                            type="text" required placeholder="e.g. Robotics Engineering Intern" value={crudData.role || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, role: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-mono text-slate-400">Duration (Timeline Text)</label>
+                            <input 
+                              type="text" required placeholder="e.g. May 2025 - July 2025" value={crudData.duration || ""} 
+                              onChange={(e) => setCrudData({ ...crudData, duration: e.target.value })}
+                              className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[10px] font-mono text-slate-400">Entry Type</label>
+                            <select 
+                              value={crudData.type || "work"}
+                              onChange={(e) => setCrudData({ ...crudData, type: e.target.value })}
+                              className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                            >
+                              <option value="work">Work Experience</option>
+                              <option value="education">Education / Academic</option>
+                            </select>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Sort Order (lower values sort higher)</label>
+                          <input 
+                            type="number" required value={crudData.sort_order ?? 0} 
+                            onChange={(e) => setCrudData({ ...crudData, sort_order: parseInt(e.target.value) || 0 })}
+                            className="w-full bg-slate-950 border border-slate-855 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-mono text-slate-400">Detailed Description</label>
+                          <textarea 
+                            rows="4" required value={crudData.description || ""} 
+                            onChange={(e) => setCrudData({ ...crudData, description: e.target.value })}
+                            className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none resize-none"
+                          ></textarea>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex justify-end gap-3 pt-3 border-t border-slate-850">
+                      <button 
+                        type="button" 
+                        onClick={() => setIsCrudOpen(false)}
+                        className="px-4 py-2 bg-slate-855 text-slate-400 hover:text-slate-200 font-semibold text-xs rounded-lg transition-colors font-mono"
+                      >
+                        CANCEL
+                      </button>
+                      <button 
+                        type="submit"
+                        className="px-6 py-2 bg-violet-600 hover:bg-violet-500 text-white font-bold text-xs rounded-lg transition-colors font-mono shadow-glow-primary"
+                      >
+                        SAVE RECORD
+                      </button>
+                    </div>
+
+                  </form>
+                </div>
+              </div>
+            )}
+
           </div>
         );
       }
@@ -88,5 +1372,6 @@
       const root = ReactDOM.createRoot(document.getElementById("root"));
       root.render(<App />);
     </script>
+    {% endraw %}
   </body>
 </html>
