@@ -8,6 +8,16 @@ app = Flask(__name__)
 # This key secures your session cookies. In a real deployment, keep this in a .env file!
 app.secret_key = 'super_secret_development_key' 
 
+# Auto-initialize database if it does not exist (useful for clean Render deployments)
+if not os.path.exists('portfolio.db'):
+    import sys
+    import subprocess
+    print("portfolio.db not found. Initializing database...", flush=True)
+    try:
+        subprocess.run([sys.executable, "init_db.py"], check=True)
+    except Exception as e:
+        print(f"Error running database initialization: {e}", flush=True)
+
 def get_db_connection():
     conn = sqlite3.connect('portfolio.db')
     conn.row_factory = sqlite3.Row 
