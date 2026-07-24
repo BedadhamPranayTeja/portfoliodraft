@@ -74,11 +74,14 @@ def add_project():
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO projects (title, description, tech_stack, image_url, github_url, live_url, featured)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO projects (title, description, tech_stack, image_url, github_url, live_url, featured, system_diagram_url, star_situation, star_task, star_action, star_result)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ''', (data['title'], data['description'], data['tech_stack'], 
           data.get('image_url', ''), data.get('github_url', ''), 
-          data.get('live_url', ''), data.get('featured', 0)))
+          data.get('live_url', ''), data.get('featured', 0),
+          data.get('system_diagram_url', ''), data.get('star_situation', ''),
+          data.get('star_task', ''), data.get('star_action', ''),
+          data.get('star_result', '')))
     conn.commit()
     new_id = cursor.lastrowid
     conn.close()
@@ -93,11 +96,14 @@ def update_project(project_id):
     conn = get_db_connection()
     conn.execute('''
         UPDATE projects 
-        SET title = ?, description = ?, tech_stack = ?, image_url = ?, github_url = ?, live_url = ?, featured = ?
+        SET title = ?, description = ?, tech_stack = ?, image_url = ?, github_url = ?, live_url = ?, featured = ?, system_diagram_url = ?, star_situation = ?, star_task = ?, star_action = ?, star_result = ?
         WHERE id = ?
     ''', (data['title'], data['description'], data['tech_stack'], 
           data.get('image_url', ''), data.get('github_url', ''), 
-          data.get('live_url', ''), data.get('featured', 0), project_id))
+          data.get('live_url', ''), data.get('featured', 0),
+          data.get('system_diagram_url', ''), data.get('star_situation', ''),
+          data.get('star_task', ''), data.get('star_action', ''),
+          data.get('star_result', ''), project_id))
     conn.commit()
     conn.close()
     return jsonify({"status": "success"})

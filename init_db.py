@@ -23,7 +23,12 @@ cursor.execute('''
         image_url TEXT,
         github_url TEXT,
         live_url TEXT,
-        featured INTEGER DEFAULT 0
+        featured INTEGER DEFAULT 0,
+        system_diagram_url TEXT,
+        star_situation TEXT,
+        star_task TEXT,
+        star_action TEXT,
+        star_result TEXT
     )
 ''')
 
@@ -111,25 +116,40 @@ projects_data = [
      'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600',
      'https://github.com/',
      '',
-     1),
+     1,
+     'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600',
+     'Our prototype robot had to traverse irregular indoor obstacle maps in real-time, but conventional navigation routines caused high processing overhead in compute-constrained SBCs.',
+     'My goal was to reduce routing calculation delays to under 100ms and integrate high-resolution LiDAR scans without overloading the Raspberry Pi\'s processor.',
+     'I implemented a dynamic Dijkstra algorithm in C++ and optimized a ROS2 mapping node to downsample LiDAR scan clouds, mapping spaces efficiently while operating on subset matrices.',
+     'Achieved a 45% reduction in CPU load on the Raspberry Pi and cut path planning recalculation latency to 40ms, allowing direct navigation inside active zones.'),
     ('Full-Stack Control Dashboard', 
      'Real-time web application to monitor, teleoperate, and collect telemetry data from hardware nodes over WebSockets.', 
      'React, Node.js, WebSockets, TailwindCSS, SQLite',
      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=600',
      'https://github.com/',
      'https://dashboard.example.com',
-     1),
+     1,
+     'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=600',
+     'Connecting to remote IoT nodes individually via HTTP polling created high bandwidth consumption and a 2-second telemetry delay.',
+     'Develop a centralized command hub to feed telemetry data and receive user control inputs at sub-second intervals.',
+     'Created a Node.js WebSocket broker to stream incoming JSON metrics from hardware endpoints directly to a React dashboard, caching the active state buffer in SQLite.',
+     'Reduced data latency to ~75ms, enabling real-time telemetry streaming and reducing network request overhead by 80%.'),
     ('Computer Vision Sorting Arm', 
      '6-DOF robotic arm integrated with OpenCV object detection to categorize and sort inventory items by size and color.', 
      'Python, OpenCV, Arduino, CAD/SolidWorks',
      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=600',
      'https://github.com/',
      '',
-     0)
+     0,
+     'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&q=80&w=600',
+     'Sorting assembly items manually was slow and prone to errors, leading to bottlenecks in sorting diverse packages.',
+     'Design an automated robotic arm system capable of detecting package colors and dimensions to classify packages automatically.',
+     'Trained an OpenCV classifier to draw bounding coordinates around items, sending positional trajectories via serial protocols to an Arduino controlling a 6-DOF servo arm.',
+     'Increased sorting throughput to 120 units per hour with a classification accuracy of 96.5%.')
 ]
 cursor.executemany('''
-    INSERT INTO projects (title, description, tech_stack, image_url, github_url, live_url, featured)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO projects (title, description, tech_stack, image_url, github_url, live_url, featured, system_diagram_url, star_situation, star_task, star_action, star_result)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ''', projects_data)
 
 # Skills Seed
