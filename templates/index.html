@@ -1077,7 +1077,6 @@
                                   <h3 className="font-bold text-slate-200 text-sm">{skill.name}</h3>
                                   <div className="flex gap-2 text-[10px] font-mono text-slate-400 pt-1">
                                     <span className="bg-slate-950 border border-slate-850 px-1.5 py-0.5 rounded text-cyan-400">{skill.category}</span>
-                                    <span className="bg-slate-950 border border-slate-850 px-1.5 py-0.5 rounded">Level: {skill.proficiency}%</span>
                                   </div>
                                 </div>
                                 <div className="flex gap-2">
@@ -1411,26 +1410,28 @@
                         </div>
                         <div className="space-y-1">
                           <label className="text-[10px] font-mono text-slate-400">Category</label>
-                          <select 
-                            value={crudData.category || "Languages"}
+                          <input 
+                            type="text" required placeholder="e.g. Languages" value={crudData.category || ""} 
                             onChange={(e) => setCrudData({ ...crudData, category: e.target.value })}
                             className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-slate-200 text-sm focus:outline-none"
-                          >
-                            <option value="Languages">Languages</option>
-                            <option value="Frameworks / Libs">Frameworks / Libs</option>
-                            <option value="Hardware / Tools">Hardware / Tools</option>
-                          </select>
-                        </div>
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-xs font-mono text-slate-400 mb-1">
-                            <span>Proficiency / Mastery Level</span>
-                            <span>{crudData.proficiency}%</span>
-                          </div>
-                          <input 
-                            type="range" min="10" max="100" step="5" value={crudData.proficiency || 80} 
-                            onChange={(e) => setCrudData({ ...crudData, proficiency: parseInt(e.target.value) })}
-                            className="w-full accent-violet-600 bg-slate-950 rounded-lg appearance-none h-1.5 cursor-pointer border border-slate-850"
                           />
+                          <div className="text-[10px] font-mono text-slate-500 pt-1">Select from existing categories or type a new one:</div>
+                          <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            {Array.from(new Set(skills.map(s => s.category))).map(cat => (
+                              <button
+                                type="button"
+                                key={cat}
+                                onClick={() => setCrudData({ ...crudData, category: cat })}
+                                className={`text-[9px] font-mono px-2 py-0.5 rounded border transition-colors ${
+                                  crudData.category === cat
+                                    ? "bg-cyan-950/40 text-cyan-300 border-cyan-500/50 shadow-glow-secondary"
+                                    : "bg-slate-950 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200"
+                                }`}
+                              >
+                                {cat}
+                              </button>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}
